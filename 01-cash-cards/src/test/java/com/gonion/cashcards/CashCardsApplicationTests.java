@@ -58,6 +58,9 @@ class CashCardsApplicationTests {
 
     JSONArray amounts = documentContext.read("$..amount");
     assertThat(amounts).containsExactly(1.00, 123.45, 150.00);
+
+    JSONArray owners = documentContext.read("$..owner");
+    assertThat(owners).containsExactly("sarah1", "sarah1", "sarah1");
   }
 
   @Test
@@ -72,6 +75,9 @@ class CashCardsApplicationTests {
 
     Double amount = documentContext.read("$.amount");
     assertThat(amount).isEqualTo(123.45);
+
+    String owner = documentContext.read("$.owner");
+    assertThat(owner).isEqualTo("sarah1");
   }
 
   @Test
@@ -85,7 +91,7 @@ class CashCardsApplicationTests {
   @Test
   @DirtiesContext
   void shouldCreateACashCard() {
-    CashCard newCashCard = new CashCard(null, 250.00);
+    CashCard newCashCard = new CashCard(null, 250.00, "sarah1");
     ResponseEntity<Void> createResponse = restTemplate.postForEntity("/cashcards", newCashCard, Void.class);
     assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
@@ -96,8 +102,10 @@ class CashCardsApplicationTests {
     DocumentContext documentContext = JsonPath.parse(getResponse.getBody());
     Number id = documentContext.read("$.id");
     Double amount = documentContext.read("$.amount");
+    String owner = documentContext.read("$.owner");
 
     assertThat(id).isNotNull();
     assertThat(amount).isEqualTo(250.00);
+    assertThat(owner).isEqualTo("sarah1");
   }
 }
