@@ -1,7 +1,9 @@
 package rewards;
 
+import config.RewardsConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 
 import javax.sql.DataSource;
@@ -53,6 +55,7 @@ import javax.sql.DataSource;
  *
  */
 @Configuration
+@Import(RewardsConfig.class)
 public class TestInfrastructureConfig {
 
 	/**
@@ -61,6 +64,8 @@ public class TestInfrastructureConfig {
 	 */
 	@Bean
 	public DataSource dataSource() {
+		// References external files that contain SQL statements.
+		// These SQL scripts will be executed when the application starts.
 		return (new EmbeddedDatabaseBuilder()) //
 				.addScript("classpath:rewards/testdb/schema.sql") //
 				.addScript("classpath:rewards/testdb/data.sql") //
