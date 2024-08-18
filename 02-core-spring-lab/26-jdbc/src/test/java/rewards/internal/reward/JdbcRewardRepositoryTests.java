@@ -35,15 +35,13 @@ public class JdbcRewardRepositoryTests {
 
 	private JdbcRewardRepository repository;
 
-	private DataSource dataSource;
-
 	private JdbcTemplate jdbcTemplate;
 
 	@BeforeEach
 	public void setUp() throws Exception {
-		dataSource = createTestDataSource();
-		repository = new JdbcRewardRepository(dataSource);
+		var dataSource = createTestDataSource();
 		jdbcTemplate = new JdbcTemplate(dataSource);
+		repository = new JdbcRewardRepository(jdbcTemplate);
 	}
 
 	@Test
@@ -74,8 +72,8 @@ public class JdbcRewardRepositoryTests {
 		//	  (If you are using Gradle, comment out the test exclude in
 		//    the build.gradle file.)
 		//
-		
-		Map<String, Object> values = null;
+		String sql = "SELECT * FROM T_REWARD WHERE CONFIRMATION_NUMBER = ?";
+		Map<String, Object> values = jdbcTemplate.queryForMap(sql, confirmation.getConfirmationNumber());
 		verifyInsertedValues(confirmation, dining, values);
 	}
 
@@ -92,7 +90,8 @@ public class JdbcRewardRepositoryTests {
 	private int getRewardCount() throws SQLException {
 		// TODO-01: Use JdbcTemplate to query for the number of rows in the T_REWARD table
 		// - Use "SELECT count(*) FROM T_REWARD" as SQL statement
-		return -1;
+		String sql = "SELECT count(*) FROM T_REWARD";
+		return jdbcTemplate.queryForObject(sql, Integer.class);
 	}
 
 	private DataSource createTestDataSource() {
